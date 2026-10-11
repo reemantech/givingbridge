@@ -2494,3 +2494,378 @@ button {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* ==========================================================================
+   Concept 4: ShelterWatch & Rabies Guard Styles
+   ========================================================================== */
+.role-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-card);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.role-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-primary-light);
+}
+
+.role-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.role-indicator.staff-active {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  animation: pulse-blip 1.5s infinite;
+}
+
+.role-switch-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.role-switch-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.role-toggle-group {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 4px;
+}
+
+.role-btn {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.role-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.role-hint {
+  font-size: 0.68rem;
+  color: var(--color-primary-light);
+}
+
+.sponsorship-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+
+.sponsorship-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+}
+
+.sponsorship-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.sponsorship-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.item-tag {
+  font-size: 0.68rem;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.item-cost {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #34d399;
+  font-family: var(--font-mono);
+}
+
+.item-title {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.item-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 1rem;
+}
+
+.sponsorship-progress {
+  margin-top: auto;
+  margin-bottom: 1rem;
+}
+
+.shelter-status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.shelter-status-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+}
+
+.shelter-header-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.shelter-name {
+  font-size: 1.25rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.quarantine-gauge-box {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+}
+
+.gauge-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.shelter-footer-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+/* Staff AI Ingestion Portal */
+.staff-portal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.ai-ingestion-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sample-doc-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.doc-choice:hover, .doc-choice:has(input:checked) {
+  background: rgba(2, 132, 199, 0.15);
+  border-color: var(--color-primary-light);
+}
+
+.doc-choice input { margin-top: 4px; }
+.doc-meta strong { font-size: 0.85rem; color: #fff; display: block; }
+.doc-meta small { font-size: 0.75rem; color: var(--text-muted); }
+
+.ai-scan-box {
+  position: relative;
+  background: #090e1a;
+  border: 2px dashed rgba(56, 189, 248, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+  text-align: center;
+  overflow: hidden;
+  margin: 1.2rem 0;
+}
+
+.scan-beam {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #38bdf8, #0284c7, transparent);
+  box-shadow: 0 0 15px #38bdf8;
+  animation: laser-scan 1.5s infinite linear;
+}
+
+.ai-scan-box.scanning .scan-beam {
+  display: block;
+}
+
+@keyframes laser-scan {
+  0% { top: 0%; }
+  100% { top: 100%; }
+}
+
+.doc-preview-icon {
+  font-size: 2rem;
+  color: var(--color-primary-light);
+  margin-bottom: 6px;
+}
+
+.validation-panel {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+}
+
+.validation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confidence-badge {
+  font-size: 0.75rem;
+  color: #34d399;
+}
+
+/* Outbreak Map & Feeds */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.kpi-mini-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.kpi-mini-card .lbl { font-size: 0.72rem; color: var(--text-muted); display: block; }
+.kpi-mini-card .val { font-size: 1.5rem; color: #fff; display: block; margin: 2px 0; }
+.kpi-mini-card .sub { font-size: 0.7rem; color: var(--text-faint); }
+
+.outbreak-map-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+}
+
+.outbreak-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.map-legend-row {
+  display: flex;
+  gap: 8px;
+  font-size: 0.7rem;
+}
+
+.legend-pill.red { color: #f87171; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: var(--radius-sm); }
+.legend-pill.yellow { color: #fbbf24; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: var(--radius-sm); }
+.legend-pill.green { color: #34d399; background: rgba(16, 185, 129, 0.15); padding: 2px 6px; border-radius: var(--radius-sm); }
+
+.outbreak-leaflet-map {
+  width: 100%;
+  height: 320px;
+  border-radius: var(--radius-md);
+  background: #090e1a;
+  border: 1px solid var(--border-subtle);
+}
+
+.records-feed-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+}
+
+.record-feed-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-md);
+  border-left: 3px solid #10b981;
+  margin-bottom: 6px;
+}
+
+.record-feed-item.positive { border-left-color: #ef4444; }
+.record-feed-item.inconclusive { border-left-color: #f59e0b; }
+
+.feed-tag { color: #fff; font-size: 0.85rem; display: block; }
+.feed-species { font-size: 0.75rem; color: var(--text-muted); }
+.feed-loc { font-size: 0.7rem; color: var(--text-faint); display: block; }
+.feed-vet { font-size: 0.7rem; color: var(--text-muted); display: block; text-align: right; }
+
+@media (max-width: 1024px) {
+  .sponsorship-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .staff-portal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

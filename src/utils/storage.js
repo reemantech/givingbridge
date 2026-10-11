@@ -3,7 +3,10 @@ import {
   INITIAL_RESOURCE_DEMANDS,
   INITIAL_COMMON_STOCK,
   INITIAL_PULSE_FLASH_NEEDS,
-  INITIAL_MUTUAL_AID_LISTINGS
+  INITIAL_MUTUAL_AID_LISTINGS,
+  INITIAL_ANIMAL_SHELTERS,
+  INITIAL_MEDICAL_SPONSORSHIP_CATALOG,
+  INITIAL_ANIMAL_MEDICAL_RECORDS
 } from '../data/mockData.js';
 import {
   syncContributionToFirestore,
@@ -20,7 +23,11 @@ const STORAGE_KEYS = {
   FLASH_NEEDS: 'budhelp_flashneeds_v1',
   MUTUAL_AID: 'budhelp_mutualaid_v1',
   TIMEBANK_BALANCE: 'budhelp_timebank_balance_v1',
-  USER_PROFILE: 'budhelp_user_profile_v1'
+  USER_PROFILE: 'budhelp_user_profile_v1',
+  ANIMAL_SHELTERS: 'budhelp_animal_shelters_v1',
+  MEDICAL_SPONSORSHIPS: 'budhelp_medical_sponsorships_v1',
+  ANIMAL_MEDICAL_RECORDS: 'budhelp_animal_medical_records_v1',
+  ACTIVE_ROLE: 'budhelp_active_role_v1'
 };
 
 export const getStoredCenters = () => {
@@ -243,6 +250,86 @@ export const verifyQrPass = (passCode) => {
   return null;
 };
 
+export const getStoredAnimalShelters = () => {
+  const data = localStorage.getItem(STORAGE_KEYS.ANIMAL_SHELTERS);
+  return data ? JSON.parse(data) : INITIAL_ANIMAL_SHELTERS;
+};
+
+export const getStoredSponsorshipCatalog = () => {
+  const data = localStorage.getItem(STORAGE_KEYS.MEDICAL_SPONSORSHIPS);
+  return data ? JSON.parse(data) : INITIAL_MEDICAL_SPONSORSHIP_CATALOG;
+};
+
+export const getStoredAnimalMedicalRecords = () => {
+  const data = localStorage.getItem(STORAGE_KEYS.ANIMAL_MEDICAL_RECORDS);
+  return data ? JSON.parse(data) : INITIAL_ANIMAL_MEDICAL_RECORDS;
+};
+
+export const getActiveRole = () => {
+  return localStorage.getItem(STORAGE_KEYS.ACTIVE_ROLE) || 'citizen'; // 'citizen' or 'ngo_staff'
+};
+
+export const setActiveRole = (role) => {
+  localStorage.setItem(STORAGE_KEYS.ACTIVE_ROLE, role);
+  return role;
+};
+
+export const sponsorMedicalItem = ({ centerId, shelterId, itemId, qty = 1, paymentMethod = 'online_payment' }) => {
+  const catalog = getStoredSponsorshipCatalog();
+  const itemIndex = catalog.findIndex(i => i.id === itemId);
+  let item = null;
+
+  if (itemIndex !== -1) {
+    catalog[itemIndex].unitsFunded = (catalog[itemIndex].unitsFunded || 0) + Number(qty);
+    localStorage.setItem(STORAGE_KEYS.MEDICAL_SPONSORSHIPS, JSON.stringify(catalog));
+    item = catalog[itemIndex];
+  }
+
+  const taxReceiptNo = `80G-VET-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+  const passCode = `TAG-SPONSOR-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const contribution = {
+    id: `ctb-vet-${Date.now()}`,
+    userId: getUserProfile().id,
+    centerId,
+    sponsorshipItemId: itemId,
+    category: 'rabies_test_sponsorship',
+    pledgedAmountOrQty: Number(qty),
+    paymentStatus: 'completed',
+    status: 'deployed_on_ground',
+    fulfillmentMethod: paymentMethod,
+    passCode,
+    taxReceiptNo,
+    metadata: {
+      itemName: item ? item.itemName : 'Medical Kit',
+      costPerUnit: item ? item.costPerUnit : 15,
+      totalAmount: item ? item.costPerUnit * qty : 15 * qty
+    },
+    createdAt: new Date().toISOString()
+  };
+
+  const contributions = getStoredContributions();
+  contributions.unshift(contribution);
+  localStorage.setItem(STORAGE_KEYS.CONTRIBUTIONS, JSON.stringify(contributions));
+  syncContributionToFirestore(contribution);
+
+  return { contribution, item };
+};
+
+export const ingestAnimalMedicalRecord = (record) => {
+  const records = getStoredAnimalMedicalRecords();
+  const newRecord = {
+    ...record,
+    id: `rec-${Date.now()}`,
+    verifiedByStaff: true,
+    verifiedByUserId: getUserProfile().id,
+    createdAt: new Date().toISOString()
+  };
+  records.unshift(newRecord);
+  localStorage.setItem(STORAGE_KEYS.ANIMAL_MEDICAL_RECORDS, JSON.stringify(records));
+  return newRecord;
+};
+
 export const resetToDefaults = () => {
   localStorage.removeItem(STORAGE_KEYS.CENTERS);
   localStorage.removeItem(STORAGE_KEYS.DEMANDS);
@@ -252,4 +339,9 @@ export const resetToDefaults = () => {
   localStorage.removeItem(STORAGE_KEYS.FLASH_NEEDS);
   localStorage.removeItem(STORAGE_KEYS.MUTUAL_AID);
   localStorage.removeItem(STORAGE_KEYS.TIMEBANK_BALANCE);
+  localStorage.removeItem(STORAGE_KEYS.ANIMAL_SHELTERS);
+  localStorage.removeItem(STORAGE_KEYS.MEDICAL_SPONSORSHIPS);
+  localStorage.removeItem(STORAGE_KEYS.ANIMAL_MEDICAL_RECORDS);
+  localStorage.removeItem(STORAGE_KEYS.ACTIVE_ROLE);
 };
+

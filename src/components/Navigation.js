@@ -3,6 +3,8 @@ import {
   getUserProfile,
   getTimebankBalance,
   getStoredContributions,
+  getActiveRole,
+  setActiveRole,
   resetToDefaults
 } from '../utils/storage.js';
 
@@ -61,6 +63,9 @@ export function renderNavigation(container, currentView, onViewChange) {
           <button class="nav-tab ${currentView === 'mutualaid' ? 'active' : ''}" data-view="mutualaid">
             ${ICONS.heartHandshake} <span>MutualAid Ledger</span>
           </button>
+          <button class="nav-tab ${currentView === 'shelterwatch' ? 'active' : ''}" data-view="shelterwatch">
+            <span>🐾 ShelterWatch</span>
+          </button>
           <button class="nav-tab ${currentView === 'coordinator' ? 'active' : ''}" data-view="coordinator">
             ${ICONS.qr} <span>Coordinator Desk</span>
           </button>
@@ -69,8 +74,13 @@ export function renderNavigation(container, currentView, onViewChange) {
           </button>
         </nav>
 
-        <!-- User Profile & Time Credits Pill -->
+        <!-- User Profile & Role Switcher Area -->
         <div class="nav-user-area">
+          <button class="role-pill-btn" id="btn-toggle-role" title="Toggle between Citizen and NGO Staff Access">
+            <span class="role-indicator ${getActiveRole() === 'ngo_staff' ? 'staff-active' : ''}"></span>
+            <span>${getActiveRole() === 'ngo_staff' ? '🩺 Staff / Vet' : '👤 Citizen'}</span>
+          </button>
+
           <div class="timebank-pill" title="TimeBank Care Credits (1 Credit = 1 Hour)">
             ${ICONS.clock}
             <span class="tb-balance">${timeCredits.toFixed(1)}h</span>
@@ -115,6 +125,16 @@ export function renderNavigation(container, currentView, onViewChange) {
         resetToDefaults();
         window.location.reload();
       }
+    });
+  }
+
+  const roleToggle = container.querySelector('#btn-toggle-role');
+  if (roleToggle) {
+    roleToggle.addEventListener('click', () => {
+      const nextRole = getActiveRole() === 'ngo_staff' ? 'citizen' : 'ngo_staff';
+      setActiveRole(nextRole);
+      renderNavigation(container, currentView, onViewChange);
+      if (onViewChange) onViewChange(currentView);
     });
   }
 }

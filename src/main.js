@@ -6,6 +6,7 @@ import { renderPulseRelayView } from './components/PulseRelayView.js';
 import { renderMutualAidLedgerView } from './components/MutualAidLedgerView.js';
 import { renderCoordinatorDashboard } from './components/CoordinatorDashboard.js';
 import { renderArchitectureView } from './components/ArchitectureView.js';
+import { renderShelterWatchView } from './components/ShelterWatchView.js';
 
 let currentView = 'discovery';
 
@@ -57,6 +58,9 @@ function renderApp() {
         break;
       case 'mutualaid':
         renderMutualAidLedgerView(viewRoot, onStateUpdate);
+        break;
+      case 'shelterwatch':
+        renderShelterWatchView(viewRoot, onStateUpdate);
         break;
       case 'coordinator':
         renderCoordinatorDashboard(viewRoot, onStateUpdate);

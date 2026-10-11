@@ -5,6 +5,7 @@ export const INITIAL_RELIEF_CENTERS = [
     id: "rc-delhi-01",
     googlePlaceId: "ChIJ_yqX9v8DdTkR9cKx5Q8YV3c",
     name: "Yamuna Flood Relief & Transit Base",
+    category: "disaster_relief",
     locality: "Mayur Vihar Ph-1, Yamuna Floodplains",
     city: "New Delhi",
     state: "Delhi",
@@ -22,6 +23,52 @@ export const INITIAL_RELIEF_CENTERS = [
     summary: "Sheltering 1,400 displaced flood victims from low-lying Yamuna riverbanks. Critical infant nutrition and dry ration shortages.",
     image: "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=80",
     liveTicker: "Needs 160 infant baby food jars and 45 waterproof tarps immediately."
+  },
+  {
+    id: "rc-pet-01",
+    googlePlaceId: "ChIJ_paw_g0RDTkR4xQ_92Z941A",
+    name: "Paws & Hope Animal Rescue Sanctuary",
+    category: "pet_shelter",
+    locality: "Sector 54, Golf Course Road Corridor",
+    city: "Gurugram",
+    state: "Haryana",
+    latitude: 28.4385,
+    longitude: 77.1122,
+    crisisType: "stray_rabies_surge",
+    crisisTitle: "Stray Rabies Surge & Canine Quarantine Triage",
+    isVerified: true,
+    verificationBadge: "AWBI & State Veterinary Board Certified",
+    regNumber: "HR-VET-2022-8104",
+    contactPhone: "+91 124 459 2200",
+    coordinator: "Dr. R. Sharma (Head Veterinarian)",
+    distanceKm: 3.2,
+    establishedHoursAgo: 24,
+    summary: "Dedicated canine & feline trauma shelter managing rabies containment, RIDT rapid antigen testing, and 10-day bite isolation quarantine.",
+    image: "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80",
+    liveTicker: "🚨 High Alert: 14 suspect canine intake cases; running low on RIDT Rabies Antigen Kits."
+  },
+  {
+    id: "rc-pet-02",
+    googlePlaceId: "ChIJ_f98_h0QDTkR4xM_99Z001B",
+    name: "Friendicoes Wildlife & Stray Trauma Base",
+    category: "pet_shelter",
+    locality: "Nizamuddin & Yamuna Riverbank Annex",
+    city: "New Delhi",
+    state: "Delhi",
+    latitude: 28.5890,
+    longitude: 77.2450,
+    crisisType: "flood",
+    crisisTitle: "Displaced Animal Flood Evacuation & Boarding",
+    isVerified: true,
+    verificationBadge: "National Animal Welfare Board",
+    regNumber: "DL-AWB-2019-0044",
+    contactPhone: "+91 11 2431 4982",
+    coordinator: "Geeta Seshamani (Sanctuary Lead)",
+    distanceKm: 6.8,
+    establishedHoursAgo: 48,
+    summary: "Rescuing cattle, community dogs, and abandoned pets displaced by Yamuna floodwaters. Provides clinical treatment and anti-rabies vaccination.",
+    image: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=80",
+    liveTicker: "Needs community sponsorship for 35 DHPPi + ARV vaccine courses."
   },
   {
     id: "rc-gurugram-02",
@@ -671,4 +718,242 @@ CREATE TABLE mutual_aid_ledger (
     task_description TEXT NOT NULL,
     status TEXT CHECK (status IN ('pending', 'completed', 'disputed')) DEFAULT 'completed',
     transacted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);`;
+);
+
+-- =========================================================================
+-- ONE HEALTH & ANIMAL WELFARE EXTENSIONS (Concept 4: ShelterWatch & Rabies Guard)
+-- =========================================================================
+
+-- 8. Animal Shelter Specific Attributes
+CREATE TABLE animal_shelters (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    center_id UUID REFERENCES relief_centers(id) ON DELETE CASCADE,
+    quarantine_capacity INT DEFAULT 0,
+    current_quarantine_count INT DEFAULT 0,
+    has_isolation_ward BOOLEAN DEFAULT false
+);
+
+-- 9. Targeted Medical Sponsorship Catalog (Publicly Funded Items)
+CREATE TABLE medical_sponsorship_catalog (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    shelter_id UUID REFERENCES animal_shelters(id) ON DELETE CASCADE,
+    item_name TEXT NOT NULL, -- e.g., 'Rabies Rapid Antigen Kit', 'Anti-Rabies Vaccine'
+    cost_per_unit NUMERIC(10, 2) NOT NULL,
+    units_needed INT NOT NULL,
+    units_funded INT DEFAULT 0
+);
+
+-- 10. Role-Restricted Animal Medical Records & AI Ingestion
+CREATE TABLE animal_medical_records (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    shelter_id UUID REFERENCES animal_shelters(id) ON DELETE CASCADE,
+    animal_identifier TEXT, -- e.g., 'TAG-DOG-2026-081'
+    species TEXT DEFAULT 'canine',
+    rescue_latitude DOUBLE PRECISION,
+    rescue_longitude DOUBLE PRECISION,
+    original_report_url TEXT NOT NULL,
+    ai_raw_json JSONB, -- Raw structured output from multimodal model
+    test_type TEXT,    -- 'RIDT', 'dFA', 'RT-PCR'
+    test_result TEXT CHECK (test_result IN ('positive', 'negative', 'inconclusive', 'pending')),
+    verified_by_staff BOOLEAN DEFAULT false,
+    verified_by_user_id UUID,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 11. Supabase / PostgreSQL Row-Level Security (RLS)
+ALTER TABLE animal_medical_records ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow only verified NGO staff to read animal medical records"
+ON animal_medical_records
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE auth.users.id = auth.uid()
+        AND auth.users.raw_user_meta_data->>'role' = 'ngo_staff'
+    )
+);
+`;
+
+export const INITIAL_ANIMAL_SHELTERS = [
+  {
+    id: "ash-01",
+    centerId: "rc-pet-01",
+    shelterName: "Paws & Hope Animal Rescue Sanctuary",
+    quarantineCapacity: 35,
+    currentQuarantineCount: 28,
+    hasIsolationWard: true,
+    activeVetsCount: 3,
+    rabiesPositiveClusterCount: 2
+  },
+  {
+    id: "ash-02",
+    centerId: "rc-pet-02",
+    shelterName: "Friendicoes Wildlife & Stray Trauma Base",
+    quarantineCapacity: 50,
+    currentQuarantineCount: 38,
+    hasIsolationWard: true,
+    activeVetsCount: 5,
+    rabiesPositiveClusterCount: 1
+  }
+];
+
+export const INITIAL_MEDICAL_SPONSORSHIP_CATALOG = [
+  {
+    id: "med-01",
+    shelterId: "ash-01",
+    centerId: "rc-pet-01",
+    itemName: "Rabies Rapid Antigen Test Kit (RIDT)",
+    targetPathogen: "Rabies Virus Antigen",
+    costPerUnit: 15.00,
+    costUnitDisplay: "$15 (₹1,200)",
+    unitsNeeded: 60,
+    unitsFunded: 44,
+    description: "Rapid lateral flow immunochromatographic kit for stray quarantine bite intake. Delivers 98% specificity in 15 minutes."
+  },
+  {
+    id: "med-02",
+    shelterId: "ash-01",
+    centerId: "rc-pet-01",
+    itemName: "Core Vaccine Course (ARV + DHPPi)",
+    targetPathogen: "Rabies, Distemper, Parvo, Hepatitis",
+    costPerUnit: 25.00,
+    costUnitDisplay: "$25 (₹2,000)",
+    unitsNeeded: 80,
+    unitsFunded: 52,
+    description: "Full preventive vaccination schedule for newly rescued community dogs, safeguarding against rabies and canine distemper."
+  },
+  {
+    id: "med-03",
+    shelterId: "ash-01",
+    centerId: "rc-pet-01",
+    itemName: "10-Day Quarantine Boarding Sponsorship",
+    targetPathogen: "Bite Surveillance Isolation",
+    costPerUnit: 10.00,
+    costUnitDisplay: "$10 / day (₹800)",
+    unitsNeeded: 120,
+    unitsFunded: 85,
+    description: "Covers daily high-calorie clinical food, disinfectant sanitation, and isolated single-kennel care during the critical 10-day bite incubation period."
+  },
+  {
+    id: "med-04",
+    shelterId: "ash-02",
+    centerId: "rc-pet-02",
+    itemName: "Flood Rescue Animal Trauma Kit & Splints",
+    targetPathogen: "Wound & Fracture Emergency",
+    costPerUnit: 30.00,
+    costUnitDisplay: "$30 (₹2,400)",
+    unitsNeeded: 40,
+    unitsFunded: 22,
+    description: "Bandages, povidone-iodine, sterile surgical dressing, and oral antibiotics for cattle and dogs injured in floodwaters."
+  }
+];
+
+export const INITIAL_ANIMAL_MEDICAL_RECORDS = [
+  {
+    id: "rec-01",
+    shelterId: "ash-01",
+    animalIdentifier: "TAG-DOG-2026-081",
+    species: "canine",
+    rescueLatitude: 28.4385,
+    rescueLongitude: 77.1122,
+    rescueLocation: "Sector 54, Golf Course Road Market",
+    originalReportUrl: "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=400&q=80",
+    testType: "RIDT",
+    testResult: "negative",
+    confidenceScore: 0.98,
+    targetPathogen: "Rabies Virus Antigen",
+    clinicalSignsNoted: ["hypersalivation", "lethargy"],
+    quarantineRecommendedDays: 10,
+    vetName: "Dr. R. Sharma",
+    testDate: "2026-10-10",
+    verifiedByStaff: true,
+    quarantineDayCurrent: 3,
+    status: "Under Observation"
+  },
+  {
+    id: "rec-02",
+    shelterId: "ash-01",
+    animalIdentifier: "TAG-DOG-2026-082",
+    species: "canine",
+    rescueLatitude: 28.4520,
+    rescueLongitude: 77.0890,
+    rescueLocation: "Sector 43, Rapid Metro Underpass (Hotspot)",
+    originalReportUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80",
+    testType: "RIDT",
+    testResult: "positive",
+    confidenceScore: 0.99,
+    targetPathogen: "Rabies Virus Antigen",
+    clinicalSignsNoted: ["extreme aggression", "hydrophobia", "aerophobia", "jaw dropped"],
+    quarantineRecommendedDays: 14,
+    vetName: "Dr. K. Singhania",
+    testDate: "2026-10-09",
+    verifiedByStaff: true,
+    quarantineDayCurrent: 4,
+    status: "Isolation Ward Alpha (Active Outbreak)"
+  },
+  {
+    id: "rec-03",
+    shelterId: "ash-01",
+    animalIdentifier: "TAG-FEL-2026-039",
+    species: "feline",
+    rescueLatitude: 28.4610,
+    rescueLongitude: 77.0340,
+    rescueLocation: "Old Railway Road, Sector 4",
+    originalReportUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=400&q=80",
+    testType: "RT-PCR",
+    testResult: "negative",
+    confidenceScore: 0.96,
+    targetPathogen: "Feline Panleukopenia & Rabies Screen",
+    clinicalSignsNoted: ["fever", "loss of appetite"],
+    quarantineRecommendedDays: 7,
+    vetName: "Dr. R. Sharma",
+    testDate: "2026-10-08",
+    verifiedByStaff: true,
+    quarantineDayCurrent: 5,
+    status: "Recovering"
+  },
+  {
+    id: "rec-04",
+    shelterId: "ash-01",
+    animalIdentifier: "TAG-DOG-2026-085",
+    species: "canine",
+    rescueLatitude: 28.4480,
+    rescueLongitude: 77.0980,
+    rescueLocation: "Sector 56 Huda Market",
+    originalReportUrl: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=400&q=80",
+    testType: "dFA",
+    testResult: "inconclusive",
+    confidenceScore: 0.78,
+    targetPathogen: "Direct Fluorescent Antibody (dFA)",
+    clinicalSignsNoted: ["disorientation", "tremors"],
+    quarantineRecommendedDays: 10,
+    vetName: "Dr. A. Verma",
+    testDate: "2026-10-11",
+    verifiedByStaff: false,
+    quarantineDayCurrent: 1,
+    status: "Re-testing Required"
+  },
+  {
+    id: "rec-05",
+    shelterId: "ash-01",
+    animalIdentifier: "TAG-DOG-2026-089",
+    species: "canine",
+    rescueLatitude: 28.4210,
+    rescueLongitude: 77.1230,
+    rescueLocation: "Ghata Village Foothills",
+    originalReportUrl: "https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?auto=format&fit=crop&w=400&q=80",
+    testType: "RIDT",
+    testResult: "negative",
+    confidenceScore: 0.97,
+    targetPathogen: "Rabies Virus Antigen",
+    clinicalSignsNoted: ["limping", "minor dog bite wound"],
+    quarantineRecommendedDays: 10,
+    vetName: "Dr. R. Sharma",
+    testDate: "2026-10-07",
+    verifiedByStaff: true,
+    quarantineDayCurrent: 6,
+    status: "Healthy / Observation Day 6"
+  }
+];
+
