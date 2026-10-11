@@ -51,7 +51,7 @@ if (isFirebaseConfigured) {
     console.warn('⚠️ Firebase initialization failed, falling back to local storage:', err);
   }
 } else {
-  console.info('ℹ️ budHelp running in offline/local mock storage mode. Add credentials in .env to sync to Firebase Cloud Firestore & Cloud Storage.');
+  console.info('ℹ️ GivingBridge running in offline/local mock storage mode. Add credentials in .env to sync to Firebase Cloud Firestore & Cloud Storage.');
 }
 
 export { app, db, storage, auth };

@@ -78,7 +78,7 @@ export const getUserProfile = () => {
         id: "usr-citizen-491",
         name: "Shivam (Civic Responder)",
         phone: "+91 98110 44921",
-        email: "shivam.civic@budhelp.org",
+        email: "shivam.civic@givingbridge.org",
         locality: "Sector 56, Gurugram",
         trustScore: 98,
         badges: ["Verified Citizen", "First Aid Lvl 1", "Active Donor"]

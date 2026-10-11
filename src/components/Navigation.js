@@ -44,7 +44,7 @@ export function renderNavigation(container, currentView, onViewChange) {
             <span class="brand-radar"></span>
           </div>
           <div class="brand-text">
-            <span class="brand-title">budHelp</span>
+            <span class="brand-title">GivingBridge</span>
             <span class="brand-subtitle">Hyperlocal Disaster & Mutual Aid</span>
           </div>
         </div>

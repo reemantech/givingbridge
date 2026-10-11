@@ -46,7 +46,7 @@ export async function showPassModal(contribution, center) {
       <div class="pass-printable" id="printable-pass-area">
         <div class="pass-ticket-header">
           <div class="pass-logo-wrap">
-            <span class="pass-brand">budHelp</span>
+            <span class="pass-brand">GivingBridge</span>
             <span class="pass-type-chip">EMERGENCY RELIEF PASS</span>
           </div>
           <div class="pass-code-display">${contribution.passCode}</div>
