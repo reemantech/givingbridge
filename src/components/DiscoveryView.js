@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { ICONS } from '../utils/icons.js';
 import { getStoredCenters, getStoredDemands } from '../utils/storage.js';
 import { openCenterDetailModal } from './DetailModal.js';
+import { initPlacesAutocomplete, isGoogleMapsConfigured } from '../services/googleMaps.js';
 
 let leafletMapInstance = null;
 let currentMarkers = [];
@@ -58,9 +59,10 @@ export function renderDiscoveryView(container, onStateUpdate) {
                 type="text" 
                 id="search-input" 
                 class="search-input" 
-                placeholder="Search by city, neighborhood, or crisis (e.g. 'Yamuna', 'Delhi', 'Wayanad', 'Flood')..." 
+                placeholder="${isGoogleMapsConfigured ? 'Search places, shelters, or cities via Google Places...' : 'Search by city, neighborhood, or crisis (e.g. Yamuna, Delhi, Wayanad)...'}" 
                 value="${searchQuery}" 
               />
+              ${isGoogleMapsConfigured ? `<span class="badge badge-success font-mono" style="margin-right: 8px;">Places API Active</span>` : ''}
               ${searchQuery ? `<button class="clear-search-btn" id="clear-search-btn">${ICONS.close}</button>` : ''}
             </div>
 
@@ -235,6 +237,20 @@ export function renderDiscoveryView(container, onStateUpdate) {
         const filtered = filterCenters();
         updateCardsAndMap(filtered);
       });
+
+      // Bind Google Places Autocomplete if API key is configured
+      if (isGoogleMapsConfigured) {
+        initPlacesAutocomplete(searchInput, (selectedPlace) => {
+          searchQuery = selectedPlace.name;
+          userLocation = { lat: selectedPlace.lat, lng: selectedPlace.lng };
+          searchInput.value = selectedPlace.name;
+          if (leafletMapInstance) {
+            leafletMapInstance.flyTo([selectedPlace.lat, selectedPlace.lng], 13);
+          }
+          const filtered = filterCenters();
+          updateCardsAndMap(filtered);
+        });
+      }
     }
 
     const clearBtn = container.querySelector('#clear-search-btn');
