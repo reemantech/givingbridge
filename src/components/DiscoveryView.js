@@ -392,8 +392,13 @@ export function renderDiscoveryView(container, onStateUpdate) {
         attributionControl: false
       }).setView([28.5355, 77.2000], 11);
 
-      // CartoDB Dark Matter tiles for modern sleek aesthetic
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      // CartoDB tiles with optional authenticated API key
+      const cartoKey = import.meta.env.VITE_CARTO_API_KEY;
+      const tileUrl = cartoKey
+        ? `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${cartoKey}`
+        : `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png`;
+
+      L.tileLayer(tileUrl, {
         maxZoom: 19,
         subdomains: 'abcd',
         attribution: '&copy; OpenStreetMap &copy; CARTO'

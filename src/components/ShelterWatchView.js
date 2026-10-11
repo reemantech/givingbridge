@@ -516,7 +516,12 @@ export function renderShelterWatchView(container, onStateUpdate) {
         attributionControl: false
       }).setView([28.4450, 77.0950], 12);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      const cartoKey = import.meta.env.VITE_CARTO_API_KEY;
+      const tileUrl = cartoKey
+        ? `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${cartoKey}`
+        : `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png`;
+
+      L.tileLayer(tileUrl, {
         maxZoom: 19,
         subdomains: 'abcd'
       }).addTo(outbreakMapInstance);
